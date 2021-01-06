@@ -1,7 +1,7 @@
 import datetime
 import array
 
-p = "40bytes_from_original.txt"
+p = "40bytes_from_original.bin"
 bytes
 
 with open(p, "rb") as fp:
