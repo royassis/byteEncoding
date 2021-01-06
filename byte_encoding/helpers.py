@@ -5,7 +5,7 @@ import datetime
 import array
 
 
-# zippath = Path(r'C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\data\40bytes_from_original.zip')
+# zippath = Path(r'***REMOVED***\40bytes_from_original.zip')
 
 def get_file_handle_from_zip(zippathstr):
     """
