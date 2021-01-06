@@ -1,11 +1,12 @@
+"""
+File containing helper function
+"""
+
 import zipfile
-import io
 from pathlib import Path
 import datetime
 import array
 
-
-# zippath = Path(r'***REMOVED***\40bytes_from_original.zip')
 
 def get_file_handle_from_zip(zippathstr):
     """
