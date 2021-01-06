@@ -12,6 +12,9 @@ import helpers
 
 def read_bytes_generator(zippath: str) -> Generator[list[Union[str, float]], Any, None]:
     """
+    Returns a generator to read timestamp, measurement data
+    encoded in binary format.
+
     :param p: string representing filepath
     :return: generator
     """
