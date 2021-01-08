@@ -59,13 +59,14 @@ class MeasurePoint():
     TODO: add docstring
     """
 
-    def __init__(self, timestampbytes, measurebytes):
+    def __init__(self, timestampbytes, measurebytes, timeformat = "%Y-%m-%d-%H-%M-%S"):
         self._timestampbytes = timestampbytes
         self._measurebytes = measurebytes
+        self._timeformat = timeformat
 
     @property
     def timestamp(self):
-        return bytes_to_datetime(self._timestampbytes, timeformat = "%Y-%m-%d-%H-%M-%S")
+        return bytes_to_datetime(self._timestampbytes, self._timeformat)
 
     @property
     def measure(self):
