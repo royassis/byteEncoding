@@ -52,3 +52,24 @@ def bytes_to_datetime(new_bytearr: bytearray) -> datetime:
     dt_obj = datetime.datetime.utcfromtimestamp(seconds)
 
     return dt_obj.strftime("%Y-%m-%d-%H-%M-%S")
+
+
+class MeasurePoint():
+    """
+    TODO: add docstring
+    """
+
+    def __init__(self, timestampbytes, measurebytes):
+        self._timestampbytes = timestampbytes
+        self._measurebytes = measurebytes
+
+    @property
+    def timestamp(self):
+        return bytes_to_datetime(self._timestampbytes)
+
+    @property
+    def measure(self):
+        return byte_to_double(self._measurebytes)
+
+    def __str__(self):
+        return (f"{self.measure}, {self.timestamp}")

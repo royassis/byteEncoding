@@ -10,7 +10,8 @@ encoded in repeted sequences of 8 bytes.
 from typing import Generator, Union, Any
 import helpers
 
-def read_bytes_generator(zippath: str) -> Generator[list[Union[str, float]], Any, None]:
+
+def get_data_generator(zippath: str) -> Generator[list[Union[str, float]], Any, None]:
     """
     Returns a generator to read timestamp, measurement data
     encoded in binary format.
@@ -32,24 +33,22 @@ def read_bytes_generator(zippath: str) -> Generator[list[Union[str, float]], Any
         if len(measure_bytes) != 8 or len(datetime_bytes) != 8:
             break
 
-        # Convert bytes to stuff
-        dt = helpers.bytes_to_datetime(datetime_bytes)
-        measure = helpers.byte_to_double(measure_bytes)
+        measure = helpers.MeasurePoint(datetime_bytes, measure_bytes)
 
         # return stuff
-        yield ([dt, measure])
+        yield (measure)
 
 
 def main():
     # Path to zip
-    pathtozip = "data/40bytes_from_original.zip"
+    path_to_zip = "data/40bytes_from_original.zip"
 
     # Generator
-    bytesgen = read_bytes_generator(pathtozip)
+    zip_data_generator = get_data_generator(path_to_zip)
 
-    # each iteration returns list([dt, measure])
-    for stuff in bytesgen:
-        print(stuff)
+    # each iteration returns data object
+    for data_point in zip_data_generator:
+        print(data_point)
 
 
 if __name__ == "__main__":
