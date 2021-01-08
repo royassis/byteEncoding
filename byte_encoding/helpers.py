@@ -40,7 +40,7 @@ def byte_to_double(new_bytearr: bytearray) -> float:
     return array.array('d', new_bytearr)[0]
 
 
-def bytes_to_datetime(new_bytearr: bytearray) -> datetime:
+def bytes_to_datetime(new_bytearr: bytearray, timeformat: str) -> datetime:
     """
     Converts eight bytes to datetime
 
@@ -51,7 +51,7 @@ def bytes_to_datetime(new_bytearr: bytearray) -> datetime:
     seconds = (doubles_sequence - 25569) * 86400.0
     dt_obj = datetime.datetime.utcfromtimestamp(seconds)
 
-    return dt_obj.strftime("%Y-%m-%d-%H-%M-%S")
+    return dt_obj.strftime(timeformat)
 
 
 class MeasurePoint():
@@ -65,7 +65,7 @@ class MeasurePoint():
 
     @property
     def timestamp(self):
-        return bytes_to_datetime(self._timestampbytes)
+        return bytes_to_datetime(self._timestampbytes, timeformat = "%Y-%m-%d-%H-%M-%S")
 
     @property
     def measure(self):
