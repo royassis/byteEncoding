@@ -41,7 +41,7 @@ def get_data_generator(zippath: str) -> Generator[list[Union[str, float]], Any, 
 
 def main():
     # Path to zip
-    path_to_zip = "data/40bytes_from_original.zip"
+    path_to_zip = r""
 
     # Generator
     zip_data_generator = get_data_generator(path_to_zip)

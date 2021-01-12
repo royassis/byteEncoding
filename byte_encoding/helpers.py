@@ -28,6 +28,7 @@ def get_file_handle_from_zip(zippathstr):
     return items_file
 
 
+
 # items_file.read(8)
 
 def byte_to_double(new_bytearr: bytearray) -> float:
@@ -40,7 +41,7 @@ def byte_to_double(new_bytearr: bytearray) -> float:
     return array.array('d', new_bytearr)[0]
 
 
-def bytes_to_datetime(new_bytearr: bytearray, timeformat: str) -> datetime:
+def bytes_to_datetime(new_bytearr: bytearray, timeformat: str = "%Y-%m-%d-%H-%M-%S") -> datetime:
     """
     Converts eight bytes to datetime
 
