@@ -31,14 +31,9 @@ def bytes_to_datetime(new_bytearr: bytearray, timeformat: str = "%Y-%m-%d-%H-%M-
 
 
 class PenReader():
-    def __init__(self, file_path, dateformat="%Y-%m-%d %H:%M:%S", floatprecision=2, sep="\t",
-                 include_sensor_name=False):
+    def __init__(self, file_path):
         self._path = file_path
-        self.__dateformat = dateformat
         self.__file_object = None
-        self.__sep = sep
-        self.__floatprecision = floatprecision
-        self.__include_sensor_name = include_sensor_name
         self._pen_number = self.get_pennumber()
         self._pen_date = self.get_pendate()
 
@@ -84,13 +79,10 @@ class PenReader():
         if self.__file_object is None or initial_data == b'':
             raise StopIteration
         else:
-            timestamp = bytes_to_datetime(initial_data[:8], self.__dateformat)
-            s = self.__sep
+            timestamp = bytes_to_datetime(initial_data[:8], timeformat="%Y-%m-%d %H:%M:%S")
             value = byte_to_double(initial_data[8:])
-            retstr = f"{timestamp}{s}{value}"
+            retstr = f"{timestamp}\t{value}"
 
-            if self.__include_sensor_name:
-                retstr = f"{retstr}{s}{self._pen_number}"
             return retstr
 
 
