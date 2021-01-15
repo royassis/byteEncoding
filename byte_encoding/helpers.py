@@ -1,35 +1,9 @@
 """
 File containing helper function
 """
-
-import zipfile
-from pathlib import Path
 import datetime
 import array
 
-
-def get_file_handle_from_zip(zippathstr):
-    """
-    :param zippathstr: path to zip archive containing bin file
-    :return: handle to archived binnary file
-    """
-
-    zippath = Path(zippathstr)
-
-    # Handle to zip archive
-    archive = zipfile.ZipFile(zippath.resolve(), 'r')
-
-    # First file in zip
-    filename = archive.namelist()[0]
-
-    # Get a reading handle for file
-    items_file = archive.open(filename, 'r')
-
-    return items_file
-
-
-
-# items_file.read(8)
 
 def byte_to_double(new_bytearr: bytearray) -> float:
     """
@@ -60,7 +34,7 @@ class MeasurePoint():
     TODO: add docstring
     """
 
-    def __init__(self, timestampbytes, measurebytes, timeformat = "%Y-%m-%d-%H-%M-%S"):
+    def __init__(self, timestampbytes, measurebytes, timeformat="%Y-%m-%d-%H-%M-%S"):
         self._timestampbytes = timestampbytes
         self._measurebytes = measurebytes
         self._timeformat = timeformat
@@ -75,3 +49,44 @@ class MeasurePoint():
 
     def __str__(self):
         return (f"{self.measure}, {self.timestamp}")
+
+
+def generic_generator(filepath, dateformat="%Y-%m-%d-%H-%M-%S"):
+    double_bytes = 8
+    with open(filepath, "rb") as filehandle:
+
+        while True:
+            datetime_bytes = filehandle.read(double_bytes)
+            measure_bytes = filehandle.read(double_bytes)
+
+            if len(measure_bytes) != 8 or len(datetime_bytes) != 8:
+                break
+
+            yield f"{bytes_to_datetime(datetime_bytes, dateformat)}, {byte_to_double(measure_bytes)}"
+
+
+class PenReader():
+    def __init__(self, file_path, dateformat="%Y-%m-%d %H:%M:%S", floatprecision=None):
+        self.__path = file_path
+        self.__dateformat = dateformat
+        self.__file_object = None
+
+    def __enter__(self):
+        self.__file_object = open(self.__path, "rb")
+        return self
+
+    def __exit__(self, type, val, tb):
+        self.__file_object.close()
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        initial_data = self.__file_object.read(16)
+
+        if self.__file_object is None or initial_data == b'':
+            raise StopIteration
+        else:
+            return f"{bytes_to_datetime(initial_data[:8], self.__dateformat)}, {byte_to_double(initial_data[8:])}"
+
+
