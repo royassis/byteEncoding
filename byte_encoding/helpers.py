@@ -3,6 +3,7 @@ File containing helper function
 """
 import datetime
 import array
+import re
 
 
 def byte_to_double(new_bytearr: bytearray) -> float:
@@ -29,50 +30,46 @@ def bytes_to_datetime(new_bytearr: bytearray, timeformat: str = "%Y-%m-%d-%H-%M-
     return dt_obj.strftime(timeformat)
 
 
-class MeasurePoint():
-    """
-    TODO: add docstring
-    """
-
-    def __init__(self, timestampbytes, measurebytes, timeformat="%Y-%m-%d-%H-%M-%S"):
-        self._timestampbytes = timestampbytes
-        self._measurebytes = measurebytes
-        self._timeformat = timeformat
-
-    @property
-    def timestamp(self):
-        return bytes_to_datetime(self._timestampbytes, self._timeformat)
-
-    @property
-    def measure(self):
-        return byte_to_double(self._measurebytes)
-
-    def __str__(self):
-        return (f"{self.measure}, {self.timestamp}")
-
-
-def generic_generator(filepath, dateformat="%Y-%m-%d-%H-%M-%S"):
-    double_bytes = 8
-    with open(filepath, "rb") as filehandle:
-
-        while True:
-            datetime_bytes = filehandle.read(double_bytes)
-            measure_bytes = filehandle.read(double_bytes)
-
-            if len(measure_bytes) != 8 or len(datetime_bytes) != 8:
-                break
-
-            yield f"{bytes_to_datetime(datetime_bytes, dateformat)}, {byte_to_double(measure_bytes)}"
-
-
 class PenReader():
-    def __init__(self, file_path, dateformat="%Y-%m-%d %H:%M:%S", floatprecision=None):
-        self.__path = file_path
+    def __init__(self, file_path, dateformat="%Y-%m-%d %H:%M:%S", floatprecision=2, sep="\t",
+                 include_sensor_name=False):
+        self._path = file_path
         self.__dateformat = dateformat
         self.__file_object = None
+        self.__sep = sep
+        self.__floatprecision = floatprecision
+        self.__include_sensor_name = include_sensor_name
+        self._pen_number = self.get_pennumber()
+        self._pen_date = self.get_pendate()
+
+    def read_all(self):
+        outtext = ""
+        for line in self:
+            outtext = outtext + line + "\n"
+
+        return outtext
+
+    def to_csv(self, outpath=None):
+        if not outpath:
+            outpath = f"{self._pen_date}.csv"
+
+        with open(outpath, "w") as fp:
+            fp.write(self.read_all())
+
+    def get_pennumber(self):
+        format = r".*Pen(?P<sensornumber>\d+).*"
+        match = re.match(format, str(self._path))
+
+        return int(match.group("sensornumber"))
+
+    def get_pendate(self):
+        with open(self._path, "rb") as fp:
+            bts = fp.read(8)
+
+        return bytes_to_datetime(bts)[:10]
 
     def __enter__(self):
-        self.__file_object = open(self.__path, "rb")
+        self.__file_object = open(self._path, "rb")
         return self
 
     def __exit__(self, type, val, tb):
@@ -87,6 +84,16 @@ class PenReader():
         if self.__file_object is None or initial_data == b'':
             raise StopIteration
         else:
-            return f"{bytes_to_datetime(initial_data[:8], self.__dateformat)}, {byte_to_double(initial_data[8:])}"
+            timestamp = bytes_to_datetime(initial_data[:8], self.__dateformat)
+            s = self.__sep
+            value = byte_to_double(initial_data[8:])
+            retstr = f"{timestamp}{s}{value}"
+
+            if self.__include_sensor_name:
+                retstr = f"{retstr}{s}{self._pen_number}"
+            return retstr
 
 
+class PenZipReader():
+    def __init__(self, zippath):
+        pass
