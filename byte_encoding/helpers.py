@@ -7,7 +7,9 @@ import re
 from pathlib import Path
 import pandas as pd
 from collections import namedtuple
-
+import zipfile
+import os
+import glob
 
 def byte_to_double(new_bytearr: bytearray) -> float:
     """
@@ -100,6 +102,9 @@ class PenParser():
         self.df = df
 
     def to_csv(self, path_or_buf=None, usedate=False, *args, **kwargs):
+        if not self.df:
+            self.load_to_df()
+
         path_or_buff = Path(path_or_buf)
         if usedate:
             if not path_or_buff.is_dir():
@@ -113,5 +118,39 @@ class PenParser():
 
 
 class PenZipReader():
-    def __init__(self, zippath):
-        pass
+    def __init__(self, zip_path):
+        self.zip_path = Path(zip_path)
+        self.zip_handle = None
+        self.file_list = None
+        self.list_len = None
+        self.file_location = 0
+        self.extracted = None
+
+    def clean_filelist(self, filelist):
+        paths = [path for path in filelist if re.match(".*Pen.*", path)]
+        return paths
+
+    def __enter__(self):
+        self.zip_handle = zipfile.ZipFile(self.zip_path)
+        self.file_list = self.clean_filelist(self.zip_handle.namelist())
+        self.list_len = len(self.file_list)
+        return self
+
+    def __exit__(self, type, val, tb):
+        self.zip_handle.close()
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        try:
+            os.remove(self.extracted)
+        except:
+            pass
+        if self.file_location == self.list_len:
+            raise StopIteration
+        else:
+            file_name = self.file_list[self.file_location]
+            self.file_location = self.file_location + 1
+            self.extracted = self.zip_handle.extract(file_name, "temp")
+            return self.extracted
