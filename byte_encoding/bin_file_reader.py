@@ -1,8 +1,10 @@
 from pathlib import Path
-from helpers import PenReader
+from helpers import PenReader, PenParser
 import zipfile
 import tempfile
 import pandas as pd
+
+df = pd.DataFrame().to_csv
 
 # path_to_zip = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\data\wserver101-Week-36-Year-2017.zip")
 #
@@ -21,5 +23,8 @@ import pandas as pd
 
 path_to_pen = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\data\Pen2_20170909_raw")
 
-with PenReader(path_to_pen) as penfile:
-    penfile.to_csv(".", adddate=True)
+p = PenParser(path_to_pen)
+
+p.load_to_df()
+
+p.to_csv(path_or_buf=".", usedate=True, header=False, mode="a", index=False)
