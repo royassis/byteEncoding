@@ -16,7 +16,7 @@ def byte_to_double(new_bytearr: bytearray) -> float:
     return array.array('d', new_bytearr)[0]
 
 
-def bytes_to_datetime(new_bytearr: bytearray, timeformat: str = "%Y-%m-%d-%H-%M-%S") -> datetime:
+def bytes_to_datetime(new_bytearr: bytearray):
     """
     Converts eight bytes to datetime
 
@@ -27,26 +27,26 @@ def bytes_to_datetime(new_bytearr: bytearray, timeformat: str = "%Y-%m-%d-%H-%M-
     seconds = (doubles_sequence - 25569) * 86400.0
     dt_obj = datetime.datetime.utcfromtimestamp(seconds)
 
-    return dt_obj.strftime(timeformat)
+    return dt_obj
 
 
 class PenReader():
     def __init__(self, file_path):
         self._path = file_path
         self.__file_object = None
-        self._pen_number = self.get_pennumber()
-        self._pen_date = self.get_pendate()
+        self.sensor_number = self.get_pennumber()
+        self.measure_date = self.get_pendate()
 
-    def read_all(self):
+    def read_all(self,  **kwargs):
         outtext = ""
-        for line in self:
+        for line in self.custom_iter(**kwargs):
             outtext = outtext + line + "\n"
 
         return outtext
 
     def to_csv(self, outpath=None):
         if not outpath:
-            outpath = f"{self._pen_date}.csv"
+            outpath = f"{self.measure_date}.csv"
 
         with open(outpath, "w") as fp:
             fp.write(self.read_all())
@@ -61,7 +61,23 @@ class PenReader():
         with open(self._path, "rb") as fp:
             bts = fp.read(8)
 
-        return bytes_to_datetime(bts)[:10]
+        return bytes_to_datetime(bts).date
+
+    def custom_iter(self, timeformat="%Y-%m-%d %H:%M:%S", sep="\t", perc=2, addsensor=True):
+
+        for ts, value in self:
+            output = []
+            timestamp = ts.strftime(timeformat)
+            value = "{1:,.{0}f}".format(perc, value)
+
+            output.append(timestamp)
+            output.append(value)
+            if addsensor:
+                output.append(self.sensor_number)
+
+            stroutput = map(str, output)
+
+            yield sep.join(stroutput)
 
     def __enter__(self):
         self.__file_object = open(self._path, "rb")
@@ -79,11 +95,10 @@ class PenReader():
         if self.__file_object is None or initial_data == b'':
             raise StopIteration
         else:
-            timestamp = bytes_to_datetime(initial_data[:8], timeformat="%Y-%m-%d %H:%M:%S")
+            timestamp = bytes_to_datetime(initial_data[:8])
             value = byte_to_double(initial_data[8:])
-            retstr = f"{timestamp}\t{value}"
 
-            return retstr
+            return timestamp, value
 
 
 class PenZipReader():

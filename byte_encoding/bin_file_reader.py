@@ -2,6 +2,7 @@ from pathlib import Path
 from helpers import PenReader
 import zipfile
 import tempfile
+import pandas as pd
 
 # path_to_zip = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\data\wserver101-Week-36-Year-2017.zip")
 #
@@ -21,7 +22,4 @@ import tempfile
 path_to_pen = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\data\Pen2_20170909_raw")
 
 with PenReader(path_to_pen) as penfile:
-    for i in penfile:
-        print(i)
-
-
+    print(penfile.read_all())
