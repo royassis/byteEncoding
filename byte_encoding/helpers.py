@@ -4,6 +4,7 @@ File containing helper function
 import datetime
 import array
 import re
+from pathlib import Path
 
 
 def byte_to_double(new_bytearr: bytearray) -> float:
@@ -37,19 +38,28 @@ class PenReader():
         self.sensor_number = self.get_pennumber()
         self.measure_date = self.get_pendate()
 
-    def read_all(self,  **kwargs):
+    def read_all(self, **kwargs):
         outtext = ""
         for line in self.custom_iter(**kwargs):
             outtext = outtext + line + "\n"
 
         return outtext
 
-    def to_csv(self, outpath=None):
-        if not outpath:
-            outpath = f"{self.measure_date}.csv"
+    def to_csv(self, outpath=None, adddate=True, mode="a", sep="," ):
 
-        with open(outpath, "w") as fp:
-            fp.write(self.read_all())
+        if not outpath:
+            raise ValueError("please enter a path")
+
+        outpath = Path(outpath)
+
+        if not outpath.is_dir() and adddate:
+            raise ValueError("outpath is not a dir while adddate is True")
+
+        if  outpath.is_dir() and adddate:
+            outpath = outpath / self.measure_date / ".csv"
+
+        with open(outpath, mode) as fp:
+            fp.write(self.read_all(sep = sep))
 
     def get_pennumber(self):
         format = r".*Pen(?P<sensornumber>\d+).*"

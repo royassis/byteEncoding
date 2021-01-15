@@ -22,4 +22,4 @@ import pandas as pd
 path_to_pen = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\data\Pen2_20170909_raw")
 
 with PenReader(path_to_pen) as penfile:
-    print(penfile.read_all())
+    penfile.to_csv(".", adddate=True)
