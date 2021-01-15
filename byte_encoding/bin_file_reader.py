@@ -1,10 +1,11 @@
 from pathlib import Path
-from helpers import  PenParser, PenZipReader
+from helpers import PenParser, PenZipReader
+import logging
 
+logging.basicConfig(level=logging.INFO)
 
 path_to_zip = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\data\wserver101-Week-36-Year-2017.zip")
 with PenZipReader(path_to_zip) as z:
     for uncompressed_temp_file in z:
-        p = PenParser(uncompressed_temp_file)
-        p.to_csv("temps.csv")
-
+        logging.info(f"Processing {uncompressed_temp_file}")
+        PenParser(uncompressed_temp_file).load_to_df().to_csv(usedate=True, mode="a", header=False, path_or_buf="temp2/")

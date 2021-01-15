@@ -9,7 +9,6 @@ import pandas as pd
 from collections import namedtuple
 import zipfile
 import os
-import glob
 
 def byte_to_double(new_bytearr: bytearray) -> float:
     """
@@ -101,9 +100,9 @@ class PenParser():
         df["sensor_number"] = self.meta_data.sensor_number
         self.df = df
 
+        return self
+
     def to_csv(self, path_or_buf=None, usedate=False, *args, **kwargs):
-        if not self.df:
-            self.load_to_df()
 
         path_or_buff = Path(path_or_buf)
         if usedate:
