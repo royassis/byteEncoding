@@ -2,6 +2,7 @@ from pathlib import Path
 import re
 import zipfile
 import os
+from abc import ABC
 
 class ZipExtractorUtils:
     @staticmethod
@@ -10,9 +11,7 @@ class ZipExtractorUtils:
         return paths
 
 
-class ZipFileExtractorIterator():
-    """Each iteration cycle involves extracting archfile to a tempfile and returning the temphadnle
-    when cycle if done - delete the tempfile"""
+class BaseZipIterator(ABC):
     def __init__(self, zip_path):
         self.zip_path = Path(zip_path)
         self.zip_handle = None
@@ -33,6 +32,13 @@ class ZipFileExtractorIterator():
     def __iter__(self):
         return self
 
+    def __next__(self):
+        pass
+
+
+class ZipFileExtractorIterator(BaseZipIterator):
+    """Each iteration cycle involves extracting archfile to a tempfile and returning the temphadnle
+    when cycle if done - delete the tempfile"""
     def __next__(self):
         try:
             os.remove(self.extracted)
