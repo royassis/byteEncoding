@@ -11,7 +11,7 @@ from utils import process_sgement
 import io
 from config import SEGMENT_SIZE
 
-class PenReader():
+class PenFileReader():
 
     def __init__(self, file_path):
         self._path = file_path
@@ -48,7 +48,7 @@ class PenReader():
             return timestamp, value
 
 
-class PenParser():
+class Pen():
     meta_data = namedtuple("metaDate", "sensor_number sensor_date")
 
     def __init__(self, file_path):
@@ -62,7 +62,7 @@ class PenParser():
         return match.group("sensor_number")
 
     def get_sensor_date(self):
-        with PenReader(self.file_path) as reader:
+        with PenFileReader(self.file_path) as reader:
             ts, _ = next(reader)
         return ts
 
@@ -72,7 +72,7 @@ class PenParser():
 
     def load_to_df(self):
         data = []
-        with PenReader(self.file_path)as reader:
+        with PenFileReader(self.file_path)as reader:
             for ts, value in reader:
                 data.append([ts, value])
         df = pd.DataFrame(data, columns=["ts", "value"])
@@ -96,6 +96,7 @@ class PenParser():
 
 
 class PenZipReader():
+    """deprecated"""
     def __init__(self, zip_path):
         self.zip_path = Path(zip_path)
         self.zip_handle = None
