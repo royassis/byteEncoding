@@ -1,22 +1,39 @@
 import unittest
-from utils import zfile_read_sain
+from utils import PenGeneralIterator, RawIterators
+from pathlib import Path
+import zipfile
 
-path = r"/tests/fixtures/Pen2_20170909_raw"
+path = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\tests\fixtures\Pen2_20170909_raw")
+zpath = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\tests\fixtures\wserver102-Week-53-Year-2020.zip")
 
 class TestPenReader(unittest.TestCase):
 
-    def test_zfile_read_sain_not_breaks(self):
-        try:
-            for _ in zfile_read_sain(path):
-                pass
-        except:
-            self.fail()
-
-    def test_zfile_read_sain_returns_data(self):
+    def test_pen_decoder_iterator_path(self):
         data = []
-        for datapoint in zfile_read_sain(path):
+        for datapoint in PenGeneralIterator(path, RawIterators.raw_filepath_iterator):
+            data.append(datapoint)
+        self.assertGreater(len(data), 20)
+
+    def test_pen_decoder_iterator_zpath(self):
+        z = zipfile.ZipFile(zpath)
+        archfile = z.namelist()[-20]
+        archfilehandle = z.open(archfile)
+
+        data = []
+        for datapoint in PenGeneralIterator(archfilehandle, RawIterators.raw_archfile_iterator):
             data.append(datapoint)
         self.assertGreater(len(data), 0)
+
+    def test_pen_decoder_iterator_data(self):
+        z = zipfile.ZipFile(zpath)
+        archfile = z.namelist()[-20]
+        bytedata = z.read(archfile)
+
+        data = []
+        for datapoint in PenGeneralIterator(bytedata, RawIterators.raw_data_iterator):
+            data.append(datapoint)
+        self.assertGreater(len(data), 0)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -7,9 +7,10 @@ import pandas as pd
 from collections import namedtuple
 import zipfile
 import os
-from utils import process_sgement
+from utils import decode_sgement
 import io
 from config import SEGMENT_SIZE
+
 
 class PenFileReader():
 
@@ -43,7 +44,7 @@ class PenFileReader():
         if self.__file_object is None or segment_bytes == b'':
             raise StopIteration
         else:
-            timestamp, value = process_sgement(segment_bytes)
+            timestamp, value = decode_sgement(segment_bytes)
 
             return timestamp, value
 
