@@ -1,6 +1,5 @@
 import unittest
-from utils import PenGeneralIterator, RawIterators
-from ZipIterators import ZipFileExtractorIterator
+from ZipIterators import ZipFileExtractorIterator, ZipFileHandleIterator
 from pathlib import Path
 
 path = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\tests\fixtures\Pen2_20170909_raw")
@@ -8,9 +7,15 @@ zpath = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\tests\fi
 
 class TestZipFileExtractorIterator(unittest.TestCase):
 
-    def test_sain(self):
-        for _ in ZipFileExtractorIterator(zpath):
-            pass
+    def test_sain_ZipFileExtractorIterator(self):
+        with ZipFileExtractorIterator(zpath) as ziter:
+            for stuff in ziter:
+                print(stuff)
+
+    def test_sain_ZipFileHandleIterator(self):
+        with ZipFileHandleIterator(zpath) as ziter:
+            for stuff in ziter:
+                print(stuff)
 
 if __name__ == '__main__':
     unittest.main()

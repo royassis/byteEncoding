@@ -18,7 +18,6 @@ class BaseZipIterator(ABC):
         self.file_list = None
         self.list_len = None
         self.file_location = 0
-        self.extracted = None
 
     def __enter__(self):
         self.zip_handle = zipfile.ZipFile(self.zip_path)
@@ -51,3 +50,20 @@ class ZipFileExtractorIterator(BaseZipIterator):
             self.file_location = self.file_location + 1
             self.extracted = self.zip_handle.extract(file_name, "temp")
             return self.extracted
+
+class ZipFileHandleIterator(BaseZipIterator):
+    """Each iteration cycle involves extracting archfile to a tempfile and returning the temphadnle
+    when cycle if done - delete the tempfile"""
+    def __next__(self):
+        try:
+            self.archname_handle.close()
+        except:
+            pass
+
+        if self.file_location == self.list_len:
+            raise StopIteration
+        else:
+            file_name = self.file_list[self.file_location]
+            self.file_location = self.file_location + 1
+            self.archname_handle = self.zip_handle.open(file_name)
+            return self.archname_handle

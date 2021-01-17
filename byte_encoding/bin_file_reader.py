@@ -1,5 +1,5 @@
 from pathlib import Path
-from FileOrEquivalentIterators import Pen
+from MiscCode import Pen
 from ZipIterators import ZipFileExtractorIterator
 import logging
 
