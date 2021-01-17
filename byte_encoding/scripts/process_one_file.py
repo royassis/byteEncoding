@@ -1,5 +1,5 @@
 from pathlib import Path
-import helpers
+import myclasses
 
 filepath= Path (r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\data\Pen2_20170909_raw")
 with open(filepath, "rb") as fp:
@@ -18,8 +18,8 @@ with open(out_path, "w") as fp:
         e2 = s2 + value_size
 
         try:
-            ts = helpers.bytes_to_datetime( data[s1 : e1], timeformat = "%Y-%m-%d %H:%M:%S")
-            value= helpers.byte_to_double( data[s2 : e2])
+            ts = myclasses.bytes_to_datetime(data[s1: e1], timeformat ="%Y-%m-%d %H:%M:%S")
+            value= myclasses.byte_to_double(data[s2: e2])
 
             line = f"{ts}\t{value}\n"
             print(line)

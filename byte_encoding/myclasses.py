@@ -1,51 +1,31 @@
 """
 File containing helper function
 """
-import datetime
-import array
 import re
 from pathlib import Path
 import pandas as pd
 from collections import namedtuple
 import zipfile
 import os
-
-def byte_to_double(new_bytearr: bytearray) -> float:
-    """
-    Wrapper for array.array()
-
-    :param new_bytearr: 8 byte chunck representing Double
-    :return: float
-    """
-    return array.array('d', new_bytearr)[0]
-
-
-def bytes_to_datetime(new_bytearr: bytearray):
-    """
-    Converts eight bytes to datetime
-
-    :param new_bytearr: 8 byte chunck representing Double
-    :return: datetime object
-    """
-    doubles_sequence = byte_to_double(new_bytearr)
-    seconds = (doubles_sequence - 25569) * 86400.0
-    dt_obj = datetime.datetime.utcfromtimestamp(seconds)
-
-    return dt_obj
-
+from utils import process_sgement
+import io
+from config import SEGMENT_SIZE
 
 class PenReader():
+
     def __init__(self, file_path):
         self._path = file_path
         self.__file_object = None
 
     def read_all(self):
-        outtext = ""
-        for ts, value in self:
-            line = f"{ts}\t{value}"
-            outtext = outtext + line + "\n"
+        with  open(self._path, "rb") as fp:
+            raw_data = fp.read()
 
-        return outtext
+        self.__file_object = io.BytesIO(raw_data)
+
+        data = [segment for segment in self]
+
+        return data
 
     def __enter__(self):
         self.__file_object = open(self._path, "rb")
@@ -58,13 +38,12 @@ class PenReader():
         return self
 
     def __next__(self):
-        initial_data = self.__file_object.read(16)
+        segment_bytes = self.__file_object.read(SEGMENT_SIZE)
 
-        if self.__file_object is None or initial_data == b'':
+        if self.__file_object is None or segment_bytes == b'':
             raise StopIteration
         else:
-            timestamp = bytes_to_datetime(initial_data[:8])
-            value = byte_to_double(initial_data[8:])
+            timestamp, value = process_sgement(segment_bytes)
 
             return timestamp, value
 

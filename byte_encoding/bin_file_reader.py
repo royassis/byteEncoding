@@ -1,5 +1,5 @@
 from pathlib import Path
-from helpers import PenParser, PenZipReader
+from myclasses import PenParser, PenZipReader
 import logging
 
 logging.basicConfig(level=logging.INFO)
