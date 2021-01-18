@@ -85,10 +85,11 @@ def get_sensor_date_from_filepath(filepath):
     dateformat = "%Y %m %d"
 
     match = re.match(patten, filepath)
+
     if match:
         datestr = match.groups()[0]
         dateobj = datetime.datetime.strptime(datestr, dateformat)
-    return dateobj
+        return dateobj
 
 
 def get_date_list_in_zip(zippate):
@@ -98,5 +99,7 @@ def get_date_list_in_zip(zippate):
     for filepath in nl:
         dateobj = get_sensor_date_from_filepath(filepath)
         date_list.add(dateobj)
+
+    date_list = [i for i in date_list if i is not None]
 
     return date_list
