@@ -4,6 +4,7 @@ from .config import VALUE_SIZE, SEGMENT_SIZE
 import re
 import io
 import zipfile
+import pandas as pd
 
 
 def byte_to_double(new_bytearr: bytearray) -> float:
@@ -80,11 +81,11 @@ def get_sensor_date_from_data(filehandle):
     return ts
 
 
-def get_sensor_date_from_filepath(filepath):
+def get_sensor_date_from_zippate(zippate):
     patten = r".*(\d{4} \d{2} \d{2}).*"
     dateformat = "%Y %m %d"
 
-    match = re.match(patten, filepath)
+    match = re.match(patten, zippate)
 
     if match:
         datestr = match.groups()[0]
@@ -97,9 +98,11 @@ def get_date_list_in_zip(zippate):
     z = zipfile.ZipFile(zippate)
     nl = z.namelist()
     for filepath in nl:
-        dateobj = get_sensor_date_from_filepath(filepath)
+        dateobj = get_sensor_date_from_zippate(filepath)
         date_list.add(dateobj)
 
     date_list = [i for i in date_list if i is not None]
 
-    return date_list
+    s = pd.Series(date_list)
+
+    return s
