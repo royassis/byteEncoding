@@ -1,12 +1,12 @@
 from pathlib import Path
 import myclasses
 
-filepath= Path (r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\data\Pen2_20170909_raw")
+filepath= Path (r"/data\Pen2_20170909_raw")
 with open(filepath, "rb") as fp:
     data = fp.read()
 
 
-out_path = r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\data\20170909_Pen2_AnotherTry.txt"
+out_path = r"/data\20170909_Pen2_AnotherTry.txt"
 outstr = ""
 value_size = 8
 with open(out_path, "w") as fp:

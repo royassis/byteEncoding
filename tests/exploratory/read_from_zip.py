@@ -5,7 +5,7 @@ import os
 import time
 import pandas as pd
 
-p = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\tests\fixtures\wserver102-Week-53-Year-2020.zip")
+p = Path(r"/tests/fixtures/wserver102-Week-53-Year-2020.zip")
 z = zipfile.ZipFile(p)
 filtered_namelist = filter_namelist(z.namelist())
 

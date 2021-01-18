@@ -3,8 +3,8 @@ from utils import PenGeneralIterator, RawIterators
 from pathlib import Path
 import zipfile
 
-path = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\tests\fixtures\Pen2_20170909_raw")
-zpath = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\tests\fixtures\wserver102-Week-53-Year-2020.zip")
+path = Path(r"/tests/fixtures/Pen2_20170909_raw")
+zpath = Path(r"/tests/fixtures/wserver102-Week-53-Year-2020.zip")
 
 class TestPenReader(unittest.TestCase):
 

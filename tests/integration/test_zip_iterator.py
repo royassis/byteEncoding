@@ -2,8 +2,8 @@ import unittest
 from ZipIterators import ZipFileExtractorIterator, ZipFileHandleIterator
 from pathlib import Path
 
-path = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\tests\fixtures\Pen2_20170909_raw")
-zpath = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\tests\fixtures\wserver102-Week-53-Year-2020.zip")
+path = Path(r"/tests/fixtures/Pen2_20170909_raw")
+zpath = Path(r"/tests/fixtures/wserver102-Week-53-Year-2020.zip")
 
 class TestZipFileExtractorIterator(unittest.TestCase):
 

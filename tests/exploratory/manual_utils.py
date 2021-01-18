@@ -3,7 +3,7 @@ from pathlib import Path
 from utils import PenGeneralIterator, filter_namelist, get_sensor_number, get_sensor_date
 import pandas as pd
 
-p = Path(r"C:\Users\Roy\PycharmProjects\byte_encoding\byte_encoding\data\wserver101-Week-36-Year-2017.zip")
+p = Path(r"/data/wserver101-Week-36-Year-2017.zip")
 z = zipfile.ZipFile(p)
 filtered_namelist = filter_namelist(z.namelist())
 
