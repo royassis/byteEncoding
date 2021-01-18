@@ -34,7 +34,7 @@ class FileMetaDataExtractor(BaseMetaDataExtractor):
         md = self.meta_data(self.get_sensor_number(), self.get_sensor_date())
         return md
 
-class ZipMetaDataExtractor():
+class ZipMetaDataExtractor(BaseMetaDataExtractor):
     meta_data = namedtuple("metaDate", "hmi")
 
     def get_hmi(self):
