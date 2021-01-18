@@ -1,7 +1,6 @@
 from abc import ABC
 import re
 from collections import namedtuple
-from byte_encoding.FileOrEquivalentIterators import FileIterator
 import datetime
 
 class BaseMetaDataExtractor(ABC):

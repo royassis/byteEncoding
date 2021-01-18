@@ -1,6 +1,6 @@
 import zipfile
 from pathlib import Path
-from utils import PenGeneralIterator, filter_namelist, get_sensor_number, get_sensor_date
+from utils import PenGeneralIterator, filter_namelist, get_sensor_number, get_sensor_date_from_data
 import pandas as pd
 
 p = Path(r"/data/wserver101-Week-36-Year-2017.zip")
@@ -12,7 +12,7 @@ for archname in filtered_namelist[:50]:
     filehandle = z.open(archname)
 
     sensor_number = get_sensor_number(filehandle.name)
-    file_date = get_sensor_date(filehandle).strftime("%Y%m%d")
+    file_date = get_sensor_date_from_data(filehandle).strftime("%Y%m%d")
 
     data = []
     for ts, val in PenGeneralIterator(filehandle):

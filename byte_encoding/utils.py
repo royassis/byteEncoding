@@ -3,6 +3,7 @@ import array
 from .config import VALUE_SIZE, SEGMENT_SIZE
 import re
 import io
+import zipfile
 
 
 def byte_to_double(new_bytearr: bytearray) -> float:
@@ -73,7 +74,29 @@ def get_sensor_number(filename):
     return match.group("sensor_number")
 
 
-def get_sensor_date(filehandle):
+def get_sensor_date_from_data(filehandle):
     it = PenGeneralIterator(filehandle)
     ts, _ = it.__next__()
     return ts
+
+
+def get_sensor_date_from_filepath(filepath):
+    patten = r".*(\d{4} \d{2} \d{2}).*"
+    dateformat = "%Y %m %d"
+
+    match = re.match(patten, filepath)
+    if match:
+        datestr = match.groups()[0]
+        dateobj = datetime.datetime.strptime(datestr, dateformat)
+    return dateobj
+
+
+def get_date_list_in_zip(zippate):
+    date_list = set()
+    z = zipfile.ZipFile(zippate)
+    nl = z.namelist()
+    for filepath in nl:
+        dateobj = get_sensor_date_from_filepath(filepath)
+        date_list.add(dateobj)
+
+    return date_list
