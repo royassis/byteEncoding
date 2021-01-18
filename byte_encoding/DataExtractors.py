@@ -2,6 +2,7 @@ from abc import ABC
 import re
 from collections import namedtuple
 from byte_encoding.FileOrEquivalentIterators import FileIterator
+import datetime
 
 class BaseMetaDataExtractor(ABC):
     meta_data = None
@@ -31,12 +32,15 @@ class FileMetaDataExtractor(BaseMetaDataExtractor):
     def get_sensor_number(self):
         file_format = r".*Pen(?P<sensor_number>\d+).*"
         match = re.match(file_format, str(self.file_path))
-        return match.group("sensor_number")
+        if match:
+            return match.group("sensor_number")
 
     def get_sensor_date(self):
-        with FileIterator(self.file_path) as reader:
-            ts, _ = next(reader)
-        return ts
+        match = re.match(".*(?P<date>\d{4} \d\d? \d\d?).*",self.file_path)
+        if match:
+            date = match.group("date")
+            date = datetime.datetime.strptime(date, "%Y %m %d")
+        return date
 
     def get_file_metadata(self):
         md = self.meta_data(self.get_sensor_number(), self.get_sensor_date())
