@@ -1,7 +1,7 @@
 from abc import ABC
-from config import SEGMENT_SIZE
+from .config import SEGMENT_SIZE
 import io
-from utils import decode_sgement
+from .utils import decode_sgement
 
 
 class BaseFileIterator(ABC):
@@ -29,7 +29,7 @@ class BaseFileIterator(ABC):
             return timestamp, value
 
 
-class BytesArrayIterator(BaseFileIterator):
+class BytesArrayIterator():
     def __init__(self, data):
         self.data = data
         self.file_object = io.BytesIO(data)

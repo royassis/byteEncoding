@@ -1,6 +1,6 @@
 import datetime
 import array
-from config import VALUE_SIZE, SEGMENT_SIZE
+from .config import VALUE_SIZE, SEGMENT_SIZE
 import re
 import io
 
