@@ -8,7 +8,7 @@ class BaseMetaDataExtractor(ABC):
     meta_data = None
 
     def __init__(self, file_path):
-        self.file_path = file_path
+        self.file_path = str(file_path)
         self.meta_data = self.get_metadata()
 
     def get_metadata(self, stuff):
