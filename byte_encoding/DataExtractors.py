@@ -7,27 +7,15 @@ import datetime
 class BaseMetaDataExtractor(ABC):
     meta_data = None
 
-    def __init__(self, stuff):
-        pass
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.meta_data = self.get_metadata()
 
     def get_metadata(self, stuff):
         pass
 
-    def get_sensor_number(self):
-        pass
-
-    def get_sensor_date(self):
-        pass
-
-    def get_file_metadata(self):
-        pass
-
 class FileMetaDataExtractor(BaseMetaDataExtractor):
     meta_data = namedtuple("metaDate", "sensor_number sensor_date")
-
-    def __init__(self, file_path):
-        self.file_path = file_path
-        self.meta_data = self.get_file_metadata()
 
     def get_sensor_number(self):
         file_format = r".*Pen(?P<sensor_number>\d+).*"
@@ -42,9 +30,19 @@ class FileMetaDataExtractor(BaseMetaDataExtractor):
             date = datetime.datetime.strptime(date, "%Y %m %d")
         return date
 
-    def get_file_metadata(self):
+    def get_metadata(self):
         md = self.meta_data(self.get_sensor_number(), self.get_sensor_date())
         return md
 
 class ZipMetaDataExtractor():
-    pass
+    meta_data = namedtuple("metaDate", "hmi")
+
+    def get_hmi(self):
+        match = re.match(".*wserver10(?P<hmi>[12]).*",self.file_path)
+        if match:
+            hmi = int(match.group("hmi"))
+        return hmi
+
+    def get_metadata(self):
+        md = self.meta_data(self.get_hmi())
+        return md
